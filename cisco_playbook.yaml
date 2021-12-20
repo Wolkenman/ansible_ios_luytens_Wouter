@@ -1,0 +1,24 @@
+- hosts: switches
+  gather_facts: no
+  connection: network_cli
+  ignore_errors: no
+  
+  tasks:
+  - name: Install banner
+    ios_banner:
+      banner: login
+      text: |
+        This switch is property of Wouter Luytens
+        Please provide the correct login details.
+      state: present
+  - name: set hostnames
+    ios_config:
+      lines: hostname {{inventory_hostname}}
+  - name: make interface up
+    cisco.ios.ios_interface:
+      name: Ethernet4/3
+      enabled: true
+  - name: set ip for int
+    cisco.ios.ios_l3_interface:
+      name: Ethernet4/3
+      ipv4: 192.168.{{num}}.1/24
